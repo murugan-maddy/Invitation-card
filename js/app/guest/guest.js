@@ -279,7 +279,10 @@ export const guest = (() => {
         const load = (opt) => {
             loader(opt)
                 .then(() => progress.complete('libs'))
-                .catch(() => progress.invalid('libs'));
+                .catch((err) => {
+                    console.warn('Library loading skipped:', err);
+                    progress.complete('libs', true);
+                });
         };
 
         return {
