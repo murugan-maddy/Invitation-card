@@ -177,6 +177,12 @@ export const request = (method, path) => {
      * @returns {Promise<Response>}
      */
     const baseFetch = (input) => {
+        const baseUrl = document.body.getAttribute('data-url');
+        const requestUrl = typeof input === 'string'
+            ? (input.startsWith('http://') || input.startsWith('https://')
+                ? new URL(input)
+                : new URL(input, baseUrl || window.location.origin))
+            : input;
 
         /**
          * @returns {Promise<Response>}
@@ -186,7 +192,7 @@ export const request = (method, path) => {
             /**
              * @returns {Promise<Response>}
              */
-            const wrapperFetch = () => window.fetch(input, req).then(async (res) => {
+            const wrapperFetch = () => window.fetch(requestUrl, req).then(async (res) => {
                 if (reqNoBody) {
                     ac.abort();
                     return new Response(null, {
@@ -326,7 +332,7 @@ export const request = (method, path) => {
                 Object.keys(defaultJSON).forEach((k) => req.headers.delete(k));
             }
 
-            return baseFetch(new URL(path, document.body.getAttribute('data-url'))).then((res) => {
+            return baseFetch(path).then((res) => {
                 if (downName && res.ok) {
                     return baseDownload(res).then((r) => ({
                         code: r.status,
