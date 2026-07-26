@@ -25,7 +25,14 @@ export const audio = (() => {
         let audioEl = null;
 
         try {
-            const audioUrl = await cache('audio').withForceCache().get(url, progress.getAbort());
+            let audioUrl;
+            try {
+                audioUrl = await cache('audio').withForceCache().get(url, progress.getAbort());
+            } catch (cacheErr) {
+                console.warn('Audio cache failed, falling back to direct url:', cacheErr);
+                audioUrl = url;
+            }
+
             audioEl = new Audio(audioUrl);
             audioEl.loop = true;
             audioEl.muted = false;
