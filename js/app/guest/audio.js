@@ -25,15 +25,18 @@ export const audio = (() => {
         let audioEl = null;
 
         try {
-            audioEl = new Audio(await cache('audio').withForceCache().get(url, progress.getAbort()));
+            const audioUrl = await cache('audio').withForceCache().get(url, progress.getAbort());
+            audioEl = new Audio(audioUrl);
             audioEl.loop = true;
             audioEl.muted = false;
             audioEl.autoplay = false;
             audioEl.controls = false;
+            audioEl.preload = 'auto';
 
             progress.complete('audio');
-        } catch {
-            progress.invalid('audio');
+        } catch (err) {
+            console.warn('Audio load skipped:', err);
+            progress.complete('audio', true);
             return;
         }
 
