@@ -42,6 +42,9 @@ export const image = (() => {
         img.remove();
 
         progress.complete('image');
+    }).catch((err) => {
+        console.warn('Image load skipped:', err);
+        progress.complete('image', true);
     });
 
     /**
@@ -53,8 +56,8 @@ export const image = (() => {
             url: el.getAttribute('data-src'),
             res: (url) => appendImage(el, url),
             rej: (err) => {
-                console.error(err);
-                progress.invalid('image');
+                console.warn('Image fetch skipped:', err);
+                progress.complete('image', true);
             },
         });
     };
