@@ -24,26 +24,34 @@ export const audio = (() => {
          */
         let audioEl = null;
 
-        try {
-            let audioUrl;
-            try {
-                audioUrl = await cache('audio').withForceCache().get(url, progress.getAbort());
-            } catch (cacheErr) {
-                console.warn('Audio cache failed, falling back to direct url:', cacheErr);
-                audioUrl = url;
+        let audioLoaded = false;
+        const completeAudio = (skip = false) => {
+            if (audioLoaded) {
+                return;
             }
 
-            audioEl = new Audio(audioUrl);
+            audioLoaded = true;
+            progress.complete('audio', skip);
+        };
+
+        try {
+            audioEl = new Audio(url);
             audioEl.loop = true;
             audioEl.muted = false;
             audioEl.autoplay = false;
             audioEl.controls = false;
             audioEl.preload = 'auto';
 
-            progress.complete('audio');
+            audioEl.addEventListener('canplaythrough', () => completeAudio(false), { once: true });
+            audioEl.addEventListener('error', () => {
+                console.warn('Audio load failed, skipping audio');
+                completeAudio(true);
+            }, { once: true });
+
+            setTimeout(() => completeAudio(true), 10000);
         } catch (err) {
             console.warn('Audio load skipped:', err);
-            progress.complete('audio', true);
+            completeAudio(true);
             return;
         }
 
