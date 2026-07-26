@@ -67,7 +67,10 @@ export const image = (() => {
      * @returns {void}
      */
     const getByDefault = (el) => {
-        el.onerror = () => progress.invalid('image');
+        el.onerror = () => {
+            console.warn('Default image load skipped:', el.src);
+            progress.complete('image', true);
+        };
         el.onload = () => {
             el.width = el.naturalWidth;
             el.height = el.naturalHeight;
@@ -77,7 +80,8 @@ export const image = (() => {
         if (el.complete && el.naturalWidth !== 0 && el.naturalHeight !== 0) {
             progress.complete('image');
         } else if (el.complete) {
-            progress.invalid('image');
+            console.warn('Default image already complete but no size:', el.src);
+            progress.complete('image', true);
         }
     };
 
