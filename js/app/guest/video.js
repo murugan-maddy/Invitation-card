@@ -72,8 +72,11 @@ export const video = (() => {
                     throw new Error('failed to fetch video');
                 }
 
-                vid.addEventListener('error', () => progress.invalid('video'));
-                const loaded = new Promise((r) => vid.addEventListener('loadedmetadata', r, { once: true }));
+                const loaded = new Promise((r, rej) => {
+                    vid.addEventListener('loadedmetadata', r, { once: true });
+                    vid.addEventListener('error', (event) => rej(new Error('Video metadata load failed')),
+                        { once: true });
+                });
 
                 vid.src = util.escapeHtml(src);
                 wrap.appendChild(vid);
