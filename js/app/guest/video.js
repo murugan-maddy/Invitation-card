@@ -122,6 +122,10 @@ export const video = (() => {
             vid.style.removeProperty('height');
             wrap.style.removeProperty('height');
             document.getElementById('video-love-stroy-loading')?.remove();
+        }).catch((err) => {
+            console.warn('Video load skipped:', err);
+            progress.complete('video', true);
+            document.getElementById('video-love-stroy-loading')?.remove();
         });
     };
 
