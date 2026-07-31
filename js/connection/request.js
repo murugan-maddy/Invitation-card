@@ -53,12 +53,29 @@ export const pool = (() => {
          * @returns {void}
          */
         init: (callback, lists = []) => {
-            if (!window.isSecureContext) {
-                throw new Error('this application required secure context');
-            }
-
             cachePool = new Map();
-            Promise.all(lists.concat([cacheRequest]).map((v) => window.caches.open(v).then((c) => cachePool.set(v, c)))).then(() => callback());
+            const names = lists.concat([cacheRequest]);
+
+            const openCaches = async () => {
+                try {
+                    if (typeof window.caches === 'undefined') {
+                        throw new Error('Cache API is unavailable');
+                    }
+
+                    if (typeof window.isSecureContext !== 'undefined' && !window.isSecureContext) {
+                        console.warn('Secure context unavailable; continuing without cache storage.');
+                    }
+
+                    await Promise.all(names.map((v) => window.caches.open(v).then((c) => cachePool.set(v, c))));
+                } catch (error) {
+                    names.forEach((name) => cachePool.set(name, null));
+                    console.warn('Cache storage unavailable, continuing without it:', error);
+                } finally {
+                    callback();
+                }
+            };
+
+            void openCaches();
         },
     };
 })();
@@ -106,6 +123,9 @@ export const cacheWrapper = (cacheName) => {
         }
 
         return cacheObject.put(input, new Response(ab, { headers })).then(() => res);
+    }).catch((err) => {
+        console.warn('Cache write skipped:', err);
+        return null;
     });
 
     /**
@@ -117,17 +137,23 @@ export const cacheWrapper = (cacheName) => {
             return null;
         }
 
-        const maxAge = res.headers.get('Cache-Control').match(/max-age=(\d+)/)[1];
-        const expTime = Date.parse(res.headers.get('Date')) + (parseInt(maxAge) * 1000);
+        const maxAge = res.headers.get('Cache-Control')?.match(/max-age=(\d+)/)?.[1];
+        const expTime = maxAge ? Date.parse(res.headers.get('Date')) + (parseInt(maxAge) * 1000) : Date.now();
 
         return Date.now() > expTime ? null : res;
+    }).catch((err) => {
+        console.warn('Cache read skipped:', err);
+        return null;
     });
 
     /**
      * @param {string|URL} input 
      * @returns {Promise<boolean>}
      */
-    const del = (input) => cacheObject.delete(input);
+    const del = (input) => cacheObject.delete(input).catch((err) => {
+        console.warn('Cache delete skipped:', err);
+        return false;
+    });
 
     return {
         set,

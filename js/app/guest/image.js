@@ -42,6 +42,9 @@ export const image = (() => {
         img.remove();
 
         progress.complete('image');
+    }).catch((err) => {
+        console.warn('Image load skipped:', err);
+        progress.complete('image', true);
     });
 
     /**
@@ -49,12 +52,19 @@ export const image = (() => {
      * @returns {void}
      */
     const getByFetch = (el) => {
+        const src = el.getAttribute('data-src');
+
+        if (!src) {
+            progress.complete('image', true);
+            return;
+        }
+
         urlCache.push({
-            url: el.getAttribute('data-src'),
+            url: src,
             res: (url) => appendImage(el, url),
             rej: (err) => {
-                console.error(err);
-                progress.invalid('image');
+                console.warn('Image fetch skipped:', err);
+                progress.complete('image', true);
             },
         });
     };
@@ -64,7 +74,10 @@ export const image = (() => {
      * @returns {void}
      */
     const getByDefault = (el) => {
-        el.onerror = () => progress.invalid('image');
+        el.onerror = () => {
+            console.warn('Default image load skipped:', el.src);
+            progress.complete('image', true);
+        };
         el.onload = () => {
             el.width = el.naturalWidth;
             el.height = el.naturalHeight;
@@ -74,7 +87,8 @@ export const image = (() => {
         if (el.complete && el.naturalWidth !== 0 && el.naturalHeight !== 0) {
             progress.complete('image');
         } else if (el.complete) {
-            progress.invalid('image');
+            console.warn('Default image already complete but no size:', el.src);
+            progress.complete('image', true);
         }
     };
 
@@ -88,6 +102,15 @@ export const image = (() => {
      */
     const load = async () => {
         const imgs = Array.from(images);
+
+        imgs.filter((el) => el.hasAttribute('data-src')).forEach((el) => {
+            const currentSrc = el.getAttribute('src') || '';
+            const dataSrc = el.getAttribute('data-src');
+
+            if (!currentSrc || currentSrc.includes('placeholder')) {
+                el.setAttribute('src', dataSrc);
+            }
+        });
 
         /**
          * @param {function} filter 
