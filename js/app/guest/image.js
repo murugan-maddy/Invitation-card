@@ -52,8 +52,15 @@ export const image = (() => {
      * @returns {void}
      */
     const getByFetch = (el) => {
+        const src = el.getAttribute('data-src');
+
+        if (!src) {
+            progress.complete('image', true);
+            return;
+        }
+
         urlCache.push({
-            url: el.getAttribute('data-src'),
+            url: src,
             res: (url) => appendImage(el, url),
             rej: (err) => {
                 console.warn('Image fetch skipped:', err);
@@ -95,6 +102,15 @@ export const image = (() => {
      */
     const load = async () => {
         const imgs = Array.from(images);
+
+        imgs.filter((el) => el.hasAttribute('data-src')).forEach((el) => {
+            const currentSrc = el.getAttribute('src') || '';
+            const dataSrc = el.getAttribute('data-src');
+
+            if (!currentSrc || currentSrc.includes('placeholder')) {
+                el.setAttribute('src', dataSrc);
+            }
+        });
 
         /**
          * @param {function} filter 
