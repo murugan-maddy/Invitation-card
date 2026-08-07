@@ -109,7 +109,7 @@ export const theme = (() => {
         metaTheme = document.querySelector('meta[name="theme-color"]');
 
         if (!themes.has('active')) {
-            window.matchMedia('(prefers-color-scheme: dark)').matches ? setDark() : setLight();
+            setLight();
         }
 
         switch (document.documentElement.getAttribute('data-bs-theme')) {
@@ -120,7 +120,8 @@ export const theme = (() => {
                 setLight();
                 break;
             default:
-                isAuto = true;
+                setLight();
+                isAuto = false;
         }
 
         if (isDarkMode()) {
