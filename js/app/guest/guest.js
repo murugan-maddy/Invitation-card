@@ -22,6 +22,11 @@ export const guest = (() => {
     let information = null;
 
     /**
+     * @type {boolean}
+     */
+    let bootingCompleted = false;
+
+    /**
      * @type {ReturnType<typeof storage>|null}
      */
     let config = null;
@@ -279,10 +284,7 @@ export const guest = (() => {
         const load = (opt) => {
             loader(opt)
                 .then(() => progress.complete('libs'))
-                .catch((err) => {
-                    console.warn('Library loading skipped:', err);
-                    progress.complete('libs', true);
-                });
+                .catch(() => progress.invalid('libs'));
         };
 
         return {
@@ -294,6 +296,12 @@ export const guest = (() => {
      * @returns {Promise<void>}
      */
     const booting = async () => {
+        if (bootingCompleted) {
+            return;
+        }
+
+        bootingCompleted = true;
+
         animateSvg();
         countDownDate();
         showGuestName();
@@ -334,7 +342,12 @@ export const guest = (() => {
         const lib = loaderLibs();
 
         window.addEventListener('resize', util.debounce(slide));
-        document.addEventListener('undangan.progress.done', () => booting());
+        document.addEventListener('undangan.progress.done', () => {
+            void booting();
+        });
+        document.addEventListener('undangan.progress.invalid', () => {
+            void booting();
+        });
         document.addEventListener('hide.bs.modal', () => document.activeElement?.blur());
         document.getElementById('button-modal-download').addEventListener('click', (e) => {
             img.download(e.currentTarget.getAttribute('data-src'));
@@ -342,6 +355,8 @@ export const guest = (() => {
 
         document.getElementById('comment')?.remove();
         document.querySelector('a.nav-link[href="#comment"]')?.closest('li.nav-item')?.remove();
+
+        void booting();
 
         vid.load();
         img.load();
