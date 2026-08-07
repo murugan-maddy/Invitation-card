@@ -86,6 +86,122 @@ html[data-bs-theme="dark"] .bg-white-black {
     cursor: pointer;
 }
 
+.story-row {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding-left: 0.25rem;
+}
+
+.story-row::before {
+    content: "";
+    position: absolute;
+    left: 1.15rem;
+    top: 2.2rem;
+    bottom: -0.7rem;
+    width: 2px;
+    background: rgba(108, 117, 125, 0.6);
+    z-index: 0;
+}
+
+.story-row-last::before {
+    display: none;
+}
+
+.story-step {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    width: 2.3rem;
+    min-height: 100%;
+}
+
+.story-step p {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+    margin-top: 0.1rem !important;
+    flex-shrink: 0;
+    background: radial-gradient(circle at 30% 30%, #fffafc 0%, #f8dfe7 38%, #f1c7d4 65%, #e7bf87 100%) !important;
+    border: 2px solid rgba(177, 108, 126, 0.9) !important;
+    box-shadow: 0 0.35rem 0.8rem rgba(185, 114, 136, 0.22), inset 0 0.08rem 0.28rem rgba(255,255,255,0.9);
+    color: #6e4650;
+    font-weight: 700;
+    border-radius: 50% !important;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0.05rem 0 rgba(255,255,255,0.5);
+}
+
+.story-row .col {
+    padding-left: 0 !important;
+    min-width: 0;
+}
+
+.event-timing-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.event-block {
+    position: relative;
+    width: min(100%, 26rem);
+    padding: 1rem 1.25rem 1.1rem;
+    background: linear-gradient(135deg, rgba(255, 247, 251, 0.96), rgba(255, 255, 255, 0.74));
+    border: 1px solid rgba(196, 129, 152, 0.32);
+    border-radius: 1.25rem;
+    box-shadow: 0 0.8rem 1.5rem rgba(161, 106, 123, 0.12);
+    overflow: hidden;
+}
+
+.event-block::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0.32rem;
+    background: linear-gradient(180deg, #f4c7d5 0%, #d9b26c 100%);
+    border-radius: 1rem;
+}
+
+.event-block-main {
+    background: linear-gradient(135deg, rgba(255, 245, 233, 0.96), rgba(255, 255, 255, 0.76));
+}
+
+.event-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9b6d79;
+    background: rgba(244, 199, 213, 0.28);
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+}
+
+.event-title {
+    font-size: clamp(1.8rem, 4vw, 2.2rem);
+    line-height: 1.1;
+    color: #6a2d39;
+    text-shadow: 0 0.05rem 0 rgba(255,255,255,0.7);
+    letter-spacing: 0.02em;
+}
+
+.event-time {
+    font-size: 0.92rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7b5e4d;
+    font-weight: 600;
+}
+
 @media screen and (max-width: 992px) {
     .width-loading {
         width: 50%;
@@ -103,6 +219,16 @@ svg {
     line-height: 0;
     shape-rendering: geometricPrecision;
     backface-visibility: hidden;
+}
+
+svg[data-class="animate-love"],
+svg[data-class="animate-love"] path,
+.fa-heart,
+.fa-heart.fa-bounce {
+    color: #d72638 !important;
+    fill: #d72638 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
 }
 
 .svg-wrapper {
