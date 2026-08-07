@@ -1,4 +1,4 @@
-import { video } from './video.js';
+import { video } from './video.js'; 
 import { image } from './image.js';
 import { audio } from './audio.js';
 import { progress } from './progress.js';
