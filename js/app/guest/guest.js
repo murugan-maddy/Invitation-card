@@ -260,10 +260,10 @@ export const guest = (() => {
         const url = new URL('https://calendar.google.com/calendar/render');
         const data = new URLSearchParams({
             action: 'TEMPLATE',
-            text: 'The Wedding of Wahyu and Riski',
-            dates: `${formatDate('2023-03-15 10:00')}/${formatDate('2023-03-15 11:00')}`,
-            details: 'Tanpa mengurangi rasa hormat, kami mengundang Anda untuk berkenan menghadiri acara pernikahan kami. Terima kasih atas perhatian dan doa restu Anda, yang menjadi kebahagiaan serta kehormatan besar bagi kami.',
-            location: 'RT 10 RW 02, Desa Pajerukan, Kec. Kalibagor, Kab. Banyumas, Jawa Tengah 53191.',
+            text: 'The Engagement of Murugan and Neha',
+            dates: `${formatDate('2026-09-17 09:00')}/${formatDate('2026-09-17 10:30')}`,
+            details: 'We warmly invite you to join us for the engagement celebration of Murugan and Neha. Your presence and blessings will make the day even more special.',
+            location: 'The Raintree, 120, St Marys Rd, Austin Nagar, Alwarpet, Chennai, Greater Chennai, Tamil Nadu 600018',
             ctz: config.get('tz'),
         });
 
